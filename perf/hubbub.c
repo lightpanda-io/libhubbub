@@ -89,6 +89,7 @@ static hubbub_error form_associate(void *ctx, void *form, void *node);
 static hubbub_error add_attributes(void *ctx, void *node,
 		const hubbub_attribute *attributes, uint32_t n_attributes);
 static hubbub_error set_quirks_mode(void *ctx, hubbub_quirks_mode mode);
+static hubbub_error change_encoding(void *ctx, const char *charset);
 
 static hubbub_tree_handler tree_handler = {
 	create_comment,
@@ -107,6 +108,7 @@ static hubbub_tree_handler tree_handler = {
 	form_associate,
 	add_attributes,
 	set_quirks_mode,
+	change_encoding,
 	NULL,
 	NULL
 };
@@ -528,6 +530,14 @@ hubbub_error set_quirks_mode(void *ctx, hubbub_quirks_mode mode)
 {
 	UNUSED(ctx);
 	UNUSED(mode);
+
+	return HUBBUB_OK;
+}
+
+hubbub_error change_encoding(void *ctx, const char *charset)
+{
+	UNUSED(ctx);
+	UNUSED(charset);
 
 	return HUBBUB_OK;
 }

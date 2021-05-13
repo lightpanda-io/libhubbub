@@ -1,3 +1,9 @@
+# From the top level:
+#
+#     make -C examples -f example.mk clean
+#     make -C examples -f example.mk
+#     ./examples/libxml test/data/html/misnested.html
+
 CC := gcc
 LD := gcc
 

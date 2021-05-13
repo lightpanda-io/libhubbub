@@ -62,7 +62,7 @@ struct buf_t {
 
 
 #define NUM_NAMESPACES 7
-const char const *ns_names[NUM_NAMESPACES] =
+const char *ns_names[NUM_NAMESPACES] =
 		{ NULL, NULL /*html*/, "math", "svg", "xlink", "xml", "xmlns" };
 
 

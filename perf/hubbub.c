@@ -131,13 +131,10 @@ int main(int argc, char **argv)
 	int fd;
 	uint8_t *file;
 
-	if (argc != 3) {
-		printf("Usage: %s <aliases_file> <filename>\n", argv[0]);
+	if (argc != 2) {
+		printf("Usage: %s <filename>\n", argv[0]);
 		return 1;
 	}
-
-	/* Initialise library */
-	assert(hubbub_initialise(argv[1], myrealloc, NULL) == HUBBUB_OK);
 
 	assert(hubbub_parser_create("UTF-8", false, myrealloc, NULL, &parser) ==
 			HUBBUB_OK);
@@ -150,14 +147,12 @@ int main(int argc, char **argv)
 	assert(hubbub_parser_setopt(parser, HUBBUB_PARSER_DOCUMENT_NODE,
 			&params) == HUBBUB_OK);
 
-	stat(argv[2], &info);
-	fd = open(argv[2], 0);
+	stat(argv[1], &info);
+	fd = open(argv[1], 0);
 	file = mmap(NULL, info.st_size, PROT_READ, MAP_SHARED, fd, 0);
 
 	assert(hubbub_parser_parse_chunk(parser, file, info.st_size)
 			== HUBBUB_OK);
-
-	assert(hubbub_finalise(myrealloc, NULL) == HUBBUB_OK);
 
 	return HUBBUB_OK;
 }

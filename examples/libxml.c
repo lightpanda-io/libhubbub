@@ -14,6 +14,7 @@
 
 #include <libxml/HTMLparser.h>
 #include <libxml/HTMLtree.h>
+#include <libxml/debugXML.h>
 
 #include <hubbub/parser.h>
 #include <hubbub/tree.h>

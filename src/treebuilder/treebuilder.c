@@ -915,29 +915,6 @@ hubbub_error append_text(hubbub_treebuilder *treebuilder,
 }
 
 /**
- * Convert an element name into an element type
- *
- * \param treebuilder  The treebuilder instance
- * \param tag_name     The tag name to consider
- * \return The corresponding element type
- */
-element_type element_type_from_name(hubbub_treebuilder *treebuilder,
-		const hubbub_string *tag_name)
-{
-	const struct element_type_map *value;
-
-	UNUSED(treebuilder);
-
-	value = hubbub_element_type_lookup((const char *)tag_name->ptr,
-			tag_name->len);
-	if (value == NULL) {
-		return UNKNOWN;
-	}
-
-	return value->type;
-}
-
-/**
  * Determine if a node is a special element
  *
  * \param type  Node type to consider

@@ -17,127 +17,6 @@
 #include "utils/utils.h"
 #include "utils/string.h"
 
-
-#define S(x)   x, SLEN(x)
-
-static const struct {
-	const char *name;
-	size_t len;
-	element_type type;
-} name_type_map[] = {
-	{ S("address"), ADDRESS },
-	{ S("area"), AREA },
-	{ S("article"), ARTICLE },
-	{ S("aside"), ASIDE },
-	{ S("base"), BASE },
-	{ S("basefont"), BASEFONT },
-	{ S("bgsound"), BGSOUND },
-	{ S("blockquote"), BLOCKQUOTE },
-	{ S("body"), BODY },
-	{ S("br"), BR },
-	{ S("center"), CENTER },
-	{ S("col"), COL },
-	{ S("colgroup"), COLGROUP },
-	{ S("command"), COMMAND },
-	{ S("dd"), DD },
-	{ S("details"), DETAILS },
-	{ S("dialog"), DIALOG },
-	{ S("dir"), DIR },
-	{ S("div"), DIV },
-	{ S("dl"), DL },
-	{ S("dt"), DT },
-	{ S("embed"), EMBED },
-	{ S("fieldset"), FIELDSET },
-	{ S("figcaption"), FIGCAPTION },
-	{ S("figure"), FIGURE },
-	{ S("footer"), FOOTER },
-	{ S("form"), FORM },
-	{ S("frame"), FRAME },
-	{ S("frameset"), FRAMESET },
-	{ S("h1"), H1 },
-	{ S("h2"), H2 },
-	{ S("h3"), H3 },
-	{ S("h4"), H4 },
-	{ S("h5"), H5 },
-	{ S("h6"), H6 },
-	{ S("head"), HEAD },
-	{ S("hr"), HR },
-	{ S("iframe"), IFRAME },
-	{ S("image"), IMAGE },
-	{ S("img"), IMG },
-	{ S("input"), INPUT },
-	{ S("isindex"), ISINDEX },
-	{ S("li"), LI },
-	{ S("link"), LINK },
-	{ S("listing"), LISTING },
-	{ S("menu"), MENU },
-	{ S("meta"), META },
-	{ S("noembed"), NOEMBED },
-	{ S("noframes"), NOFRAMES },
-	{ S("noscript"), NOSCRIPT },
-	{ S("ol"), OL },
-	{ S("optgroup"), OPTGROUP },
-	{ S("option"), OPTION },
-	{ S("output"), OUTPUT },
-	{ S("p"), P },
-	{ S("param"), PARAM },
-	{ S("plaintext"), PLAINTEXT },
-	{ S("pre"), PRE },
-	{ S("script"), SCRIPT },
-	{ S("select"), SELECT },
-	{ S("spacer"), SPACER },
-	{ S("style"), STYLE },
-	{ S("summary"), SUMMARY },
-	{ S("tbody"), TBODY },
-	{ S("textarea"), TEXTAREA },
-	{ S("tfoot"), TFOOT },
-	{ S("thead"), THEAD },
-	{ S("title"), TITLE },
-	{ S("tr"), TR },
-	{ S("ul"), UL },
-	{ S("wbr"), WBR },
-
-	{ S("applet"), APPLET },
-	{ S("button"), BUTTON },
-	{ S("caption"), CAPTION },
-	{ S("html"), HTML },
-	{ S("marquee"), MARQUEE },
-	{ S("object"), OBJECT },
-	{ S("table"), TABLE },
-	{ S("td"), TD },
-	{ S("th"), TH },
-
-	{ S("a"), A },
-	{ S("b"), B },
-	{ S("big"), BIG },
-	{ S("em"), EM },
-	{ S("font"), FONT },
-	{ S("i"), I },
-	{ S("nobr"), NOBR },
-	{ S("s"), S },
-	{ S("small"), SMALL },
-	{ S("strike"), STRIKE },
-	{ S("strong"), STRONG },
-	{ S("tt"), TT },
-	{ S("u"), U },
-
-	{ S("xmp"), XMP },
-
-	{ S("math"), MATH },
-	{ S("mglyph"), MGLYPH },
-	{ S("malignmark"), MALIGNMARK },
-	{ S("mi"), MI },
-	{ S("mo"), MO },
-	{ S("mn"), MN },
-	{ S("ms"), MS },
-	{ S("mtext"), MTEXT },
-	{ S("annotation-xml"), ANNOTATION_XML },
-
-	{ S("svg"), SVG },
-	{ S("desc"), DESC },
-	{ S("foreignobject"), FOREIGNOBJECT },
-};
-
 static bool is_form_associated(element_type type);
 
 /**
@@ -1045,24 +924,17 @@ hubbub_error append_text(hubbub_treebuilder *treebuilder,
 element_type element_type_from_name(hubbub_treebuilder *treebuilder,
 		const hubbub_string *tag_name)
 {
-	const uint8_t *name = tag_name->ptr;
-	size_t len = tag_name->len;
-	uint32_t i;
+	const struct element_type_map *value;
 
 	UNUSED(treebuilder);
 
-	/** \todo optimise this */
-
-	for (i = 0; i < N_ELEMENTS(name_type_map); i++) {
-		if (name_type_map[i].len != len)
-			continue;
-
-		if (strncasecmp(name_type_map[i].name,
-				(const char *) name, len) == 0)
-			return name_type_map[i].type;
+	value = hubbub_element_type_lookup((const char *)tag_name->ptr,
+			tag_name->len);
+	if (value == NULL) {
+		return UNKNOWN;
 	}
 
-	return UNKNOWN;
+	return value->type;
 }
 
 /**

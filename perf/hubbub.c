@@ -50,7 +50,8 @@ struct node_t {
 	node_t *next;
 	node_t *prev;
 
-	node_t *child;
+	node_t *child_first;
+	node_t *child_last;
 	node_t *parent;
 };
 
@@ -276,26 +277,25 @@ hubbub_error append_child(void *ctx, void *parent, void *child, void **result)
 	tchild->next = tchild->prev = NULL;
 
 	*result = child;
-
 	if (parent == (void *)1) {
 		if (Document) {
 			insert = Document;
+			while (insert->next != NULL) {
+				insert = insert->next;
+			}
 		} else {
 			Document = tchild;
 		}
 	} else {
-		if (tparent->child == NULL) {
-			tparent->child = tchild;
+		if (tparent->child_first == NULL) {
+			tparent->child_first = tchild;
+			tparent->child_last = tchild;
 		} else {
-			insert = tparent->child;
+			insert = tparent->child_last;
 		}
 	}
 
 	if (insert) {
-		while (insert->next != NULL) {
-			insert = insert->next;
-		}
-
 		if (tchild->type == CHARACTER && insert->type == CHARACTER) {
 			insert->data.content = realloc(insert->data.content,
 					strlen(insert->data.content) +
@@ -305,6 +305,10 @@ hubbub_error append_child(void *ctx, void *parent, void *child, void **result)
 		} else {
 			insert->next = tchild;
 			tchild->prev = insert;
+			if (insert->parent != NULL &&
+					insert->parent != (void *)1) {
+				insert->parent->child_last = insert;
+			}
 		}
 	}
 
@@ -341,7 +345,7 @@ hubbub_error insert_before(void *ctx, void *parent, void *child, void *ref_child
 		if (tchild->prev)
 			tchild->prev->next = tchild;
 		else
-			tparent->child = tchild;
+			tparent->child_first = tchild;
 
 		*result = child;
 	}
@@ -356,11 +360,16 @@ hubbub_error remove_child(void *ctx, void *parent, void *child, void **result)
 
 	UNUSED(ctx);
 
-	assert(tparent->child);
+	assert(tparent->child_last);
+	assert(tparent->child_first);
 	assert(tchild->parent == tparent);
 
-	if (tchild->parent->child == tchild) {
-		tchild->parent->child = tchild->next;
+	if (tchild->parent->child_first == tchild) {
+		tchild->parent->child_first = tchild->next;
+	}
+
+	if (tchild->parent->child_last == tchild) {
+		tchild->parent->child_last = tchild->prev;
 	}
 
 	if (tchild->prev)
@@ -387,10 +396,6 @@ hubbub_error clone_node(void *ctx, void *node, bool deep, void **result)
 	*new_node = *old_node;
 	*result = new_node;
 
-	new_node->child = new_node->parent =
-			new_node->next = new_node->prev =
-			NULL;
-
 	if (deep == false)
 		return HUBBUB_OK;
 
@@ -401,15 +406,22 @@ hubbub_error clone_node(void *ctx, void *node, bool deep, void **result)
 
 		new_node->next = n;
 		new_node->next->prev = new_node;
+
+		new_node->parent = old_node->parent;
+		if (new_node->parent != NULL && new_node->parent != (void *)1) {
+			new_node->parent->child_last = new_node;
+		}
 	}
 
-	if (old_node->child) {
+	if (old_node->child_first) {
 		void *n;
 
-		clone_node(ctx, old_node->child, true, &n);
+		clone_node(ctx, old_node->child_first, true, &n);
 
-		new_node->child = n;
-		new_node->child->parent = new_node;
+		if (new_node)
+		new_node->child_last = n;
+		new_node->child_first = n;
+		new_node->child_first->parent = new_node;
 	}
 
 	return HUBBUB_OK;
@@ -422,30 +434,30 @@ hubbub_error reparent_children(void *ctx, void *node, void *new_parent)
 	node_t *old_parent = node;
 
 	node_t *insert;
-	node_t *kids;
+	node_t *kids_first;
+	node_t *kids_last;
 
 	UNUSED(ctx);
 
-	kids = old_parent->child;
-	if (!kids) return HUBBUB_OK;
+	kids_first = old_parent->child_first;
+	kids_last = old_parent->child_last;
+	if (!kids_first) return HUBBUB_OK;
 
-	old_parent->child = NULL;
+	old_parent->child_first = NULL;
+	old_parent->child_last = NULL;
 
-	insert = parent->child;
+	insert = parent->child_last;
 	if (!insert) {
-		parent->child = kids;
+		parent->child_first = kids_first;
 	} else {
-		while (insert->next != NULL) {
-			insert = insert->next;
-		}
-
-		insert->next = kids;
-		kids->prev = insert;
+		insert->next = kids_first;
+		kids_first->prev = insert;
 	}
+	parent->child_last = kids_last;
 
-	while (kids) {
-		kids->parent = parent;
-		kids = kids->next;
+	while (kids_first) {
+		kids_first->parent = parent;
+		kids_first = kids_first->next;
 	}
 
 	return HUBBUB_OK;
@@ -465,7 +477,7 @@ hubbub_error has_children(void *ctx, void *node, bool *result)
 {
 	UNUSED(ctx);
 
-	*result = ((node_t *)node)->child ? true : false;
+	*result = ((node_t *)node)->child_first ? true : false;
 
 	return HUBBUB_OK;
 }

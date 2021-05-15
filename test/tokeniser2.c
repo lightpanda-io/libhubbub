@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 	tests = json_object_get_array((struct json_object *)
 			(json_object_get_object(json)->head)->v);
 
-	for (i = 0; i < array_list_length(tests); i++) {
+	for (i = 0; i < (int)array_list_length(tests); i++) {
 		/* Get test */
 		struct json_object *test =
 			(struct json_object *) array_list_get_idx(tests, i);
@@ -216,7 +216,7 @@ hubbub_error token_handler(const hubbub_token *token, void *pw)
 	struct json_object *obj = NULL;
 	struct array_list *items;
 
-	for (; ctx->output_index < array_list_length(ctx->output);
+	for (; ctx->output_index < (int)array_list_length(ctx->output);
 			ctx->output_index++) {
 		/* Get object for index */
 		obj = (struct json_object *)
@@ -236,11 +236,11 @@ hubbub_error token_handler(const hubbub_token *token, void *pw)
 	 * produced more tokens than expected. We allow for the generation
 	 * of a terminating EOF token, however. */
 	assert("too many tokens" &&
-			(ctx->output_index < array_list_length(ctx->output) ||
+			(ctx->output_index < (int)array_list_length(ctx->output) ||
 			token->type == HUBBUB_TOKEN_EOF));
 
 	/* Got a terminating EOF -- no error */
-	if (ctx->output_index >= array_list_length(ctx->output))
+	if (ctx->output_index >= (int)array_list_length(ctx->output))
 		return HUBBUB_OK;
 
 	/* Now increment the output index so we don't re-expect this token */

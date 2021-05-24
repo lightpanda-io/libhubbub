@@ -271,7 +271,7 @@ static inline hubbub_error emit_current_comment(hubbub_tokeniser *tokeniser);
 static inline hubbub_error emit_current_doctype(hubbub_tokeniser *tokeniser,
 		bool force_quirks);
 static hubbub_error hubbub_tokeniser_emit_token(hubbub_tokeniser *tokeniser,
-		hubbub_token *token);
+		const hubbub_token *token);
 
 /**
  * Create a hubbub tokeniser
@@ -3365,7 +3365,7 @@ hubbub_error emit_current_doctype(hubbub_tokeniser *tokeniser,
  * \param token      Token to emit
  */
 hubbub_error hubbub_tokeniser_emit_token(hubbub_tokeniser *tokeniser,
-		hubbub_token *token)
+		const hubbub_token *token)
 {
 	hubbub_error err = HUBBUB_OK;
 

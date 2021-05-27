@@ -53,5 +53,13 @@ element_type element_type_from_name(
 		hubbub_treebuilder *treebuilder,
 		const hubbub_string *tag_name);
 
+/**
+ * Convert an element type to a name
+ *
+ * \param type  The element type
+ * \return Pointer to name
+ */
+const char *element_type_to_name(element_type type);
+
 #endif
 

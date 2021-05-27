@@ -28,3 +28,22 @@ element_type element_type_from_name(
 
 	return value->type;
 }
+
+/**
+ * Convert an element type to a name
+ *
+ * \param type  The element type
+ * \return Pointer to name
+ */
+const char *element_type_to_name(element_type type)
+{
+	size_t i;
+
+	for (i = 0; i < sizeof(wordlist) / sizeof(wordlist[0]); i++) {
+		if (wordlist[i].type == type) {
+			return wordlist[i].name;
+		}
+	}
+
+	return "UNKNOWN";
+}

@@ -1397,24 +1397,5 @@ void formatting_list_dump(hubbub_treebuilder *treebuilder, FILE *fp)
 	}
 }
 
-/**
- * Convert an element type to a name
- *
- * \param type  The element type
- * \return Pointer to name
- */
-const char *element_type_to_name(element_type type)
-{
-	size_t i;
-
-	for (i = 0;
-			i < sizeof(name_type_map) / sizeof(name_type_map[0]);
-			i++) {
-		if (name_type_map[i].type == type)
-			return name_type_map[i].name;
-	}
-
-	return "UNKNOWN";
-}
 #endif
 

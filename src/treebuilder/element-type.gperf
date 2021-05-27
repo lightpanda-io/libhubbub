@@ -11,8 +11,8 @@
 %ignore-case
 %struct-type
 %switch=1
-%define hash-function-name hubbub_element_type_hash
-%define lookup-function-name hubbub_element_type_lookup
+%define hash-function-name hubbub_element_type_generated_hash
+%define lookup-function-name hubbub_element_type_generated_lookup
 
 %{
 #include <string.h>

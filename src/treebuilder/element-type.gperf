@@ -8,6 +8,7 @@
 %language=ANSI-C
 %compare-strncmp
 %readonly-tables
+%global-table
 %ignore-case
 %struct-type
 %switch=1

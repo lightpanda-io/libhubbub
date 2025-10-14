@@ -903,7 +903,7 @@ hubbub_error append_text(hubbub_treebuilder *treebuilder,
 						text, &appended);
 	}
 
-	if (error == HUBBUB_OK) {
+	if (error == HUBBUB_OK && appended != NULL) {
 		treebuilder->tree_handler->unref_node(
 				treebuilder->tree_handler->ctx, appended);
 	}
